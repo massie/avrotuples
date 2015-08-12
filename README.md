@@ -78,3 +78,5 @@ For now, you can use [JitPack](https://jitpack.io/#massie/avrotuples/) to add `a
 ## License
 
 Avro tuples is released under an Apache 2.0 license.
+
+Pull requests are welcomed.
