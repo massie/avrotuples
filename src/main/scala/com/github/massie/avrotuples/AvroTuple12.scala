@@ -58,7 +58,7 @@ object AvroTuple12 {
 }
 
      
-case class AvroTuple12[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12](
+final case class AvroTuple12[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12](
     @transient var _1: T1,
     @transient var _2: T2,
     @transient var _3: T3,
