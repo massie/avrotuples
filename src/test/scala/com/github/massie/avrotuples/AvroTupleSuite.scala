@@ -44,9 +44,6 @@ class AvroTupleSuite extends FunSuite {
 
   test("AvroTuples can have null values") {
     val tuple = AvroTuple3(null, 0xCAFE, null)
-    assert(tuple._1 == null)
-    assert(tuple._2 == 0xCAFE)
-    assert(tuple._3 == null)
     assert(AvroTuple3.fromBytes(tuple.toBytes) == tuple)
   }
 
