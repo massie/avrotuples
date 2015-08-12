@@ -71,6 +71,10 @@ For now, Avro tuples can be comprised of null values, strings, booleans, floats,
 
 There is a known issue with Avro/Parquet and recursive schemas. Avro tuples use a recursive schema in order to support nesting.
 
+## Using Avro tuples in your project
+
+For now, you can use [JitPack](https://jitpack.io/#massie/avrotuples/) to add `avrotuples` as a dependency in your Maven project. In the future, `avrotuples` will likely be published to Maven Central.
+
 ## License
 
 Avro tuples is released under an Apache 2.0 license.
