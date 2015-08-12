@@ -98,7 +98,7 @@ object CodeGenerator {
     val ctorArgsString = ctorArgs.mkString("    ", ",\n    ", ")")
 
     val body = s"""
-      |final case class AvroTuple${n}[${getTypes(n)}](
+      |case class AvroTuple${n}[${getTypes(n)}](
       |${ctorArgsString}
       |  extends Product${n}[${getTypes(n)}] with SpecificRecord with Externalizable {
       |

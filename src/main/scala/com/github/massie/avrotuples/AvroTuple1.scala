@@ -58,7 +58,7 @@ object AvroTuple1 {
 }
 
      
-final case class AvroTuple1[T1](
+case class AvroTuple1[T1](
     @transient var _1: T1)
   extends Product1[T1] with SpecificRecord with Externalizable {
 
