@@ -1,5 +1,7 @@
 # Avro Tuples
 
+[![Build Status](https://travis-ci.org/massie/avrotuples.svg)](https://travis-ci.org/massie/avrotuples)
+
 The [Scala library](https://github.com/scala/scala/tree/2.11.x/src/library/scala) provides `Tuple1` to `Tuple22` that allow programmers to hold a fixed number of items together so they can be passed as a single object. While all the elements in an `Array` have the same type, a `TupleN` can have a mix of element types, e.g.
 
 ```scala
