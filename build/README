@@ -1,0 +1,17 @@
+The page..
+http://www.scala-sbt.org/0.13/docs/Using-Sonatype.html
+..served as a reference to cutting releases to Sonatype.
+
+To cut a new release,
+
+1. Update the version in build.sbt
+2. Cut a release on the github site
+3. Run the command "sbt +publishSigned" (note: the '+' prefix
+   means that each version of Scala, defined in crossScalaVersions
+   in build.sbt, will be built and published)
+4. Run through the Nexus UI close/publish flow at oss.sonatype.org
+
+The publishSigned tasks are provided by the gpg plugin
+(see ~/.sbt/0.13/plugins) for the configuration
+
+See ~/.sbt/0.13/sonatype.sbt for Sonatype credential information

@@ -24,6 +24,28 @@ scala> mytuple._1
 res0: com.github.massie.avrotuples.AvroTuple2[Int,String] = (2,Be)
 ```
 
+## Using Avro Tuples with your project
+
+Avro tuples is published to Maven Central.
+
+In Maven, use
+
+```xml
+<dependency>
+  <groupId>com.github.massie</groupId>
+  <artifactId>avrotuples_**SCALA_VERSION**</artifactId>
+  <version>**AVROTUPLES_VERSION**</version>
+</dependency>
+```
+
+In `sbt`, add the line
+
+```
+libraryDependencies += "com.github.massie" %% "avrotuples" % "**AVROTUPLES_VERSION**"
+```
+
+Note, that for `sbt` you don't need to specify the Scala version since the line above uses `%%` which will automatically use the correct Scala version.
+
 ## Avro Tuples are like Scala Tuples
 
 * Avro tuples can serve as a drop in replacement for Scala tuples
@@ -70,10 +92,6 @@ For now, Avro tuples can be comprised of null values, strings, booleans, floats,
 ### Recursive schemas break Parquet
 
 There is a known issue with Avro/Parquet and recursive schemas. Avro tuples use a recursive schema in order to support nesting.
-
-## Using Avro tuples in your project
-
-For now, you can use [JitPack](https://jitpack.io/#massie/avrotuples/) to add `avrotuples` as a dependency in your Maven project. In the future, `avrotuples` will likely be published to Maven Central.
 
 ## License
 
