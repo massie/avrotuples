@@ -22,6 +22,8 @@ package com.github.massie.avrotuples
 import java.io._
 import java.util
 
+import com.esotericsoftware.kryo.{Kryo, KryoSerializable}
+import com.esotericsoftware.kryo.io.{Input, Output}
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.avro.io.{DecoderFactory, EncoderFactory}
@@ -75,7 +77,7 @@ final case class AvroTuple16[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
     @transient var _14: T14,
     @transient var _15: T15,
     @transient var _16: T16)
-  extends Product16[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16] with SpecificRecord with Externalizable {
+  extends Product16[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16] with SpecificRecord with KryoSerializable with Externalizable {
 
   def this() = this(null.asInstanceOf[T1],
                     null.asInstanceOf[T2],
@@ -189,6 +191,14 @@ final case class AvroTuple16[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
 
   override def writeExternal(out: ObjectOutput): Unit = {
     AvroTuple16.writeToOutputStream(this, ExternalizableOutput(out))
+  }
+
+  override def write(kryo: Kryo, output: Output): Unit = {
+    AvroTuple16.writeToOutputStream(this, output.getOutputStream)
+  }
+
+  override def read(kryo: Kryo, input: Input): Unit = {
+    AvroTuple16.readFromInputStream(this, input.getInputStream)
   }
     
 

@@ -15,8 +15,10 @@
  */
 package com.github.massie.avrotuples
 
-import java.io.{ByteArrayInputStream, ObjectInputStream, ByteArrayOutputStream, ObjectOutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
+import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.io.{Input, Output}
 import org.scalatest.FunSuite
 
 class AvroTupleSuite extends FunSuite {
@@ -66,6 +68,24 @@ class AvroTupleSuite extends FunSuite {
     objIn.close()
     in.close()
     assert(inTuple == outTuple)
+  }
+
+  test("Avro Tuples are Kryo serializable") {
+    val kryo = new Kryo()
+    kryo.setReferences(false)
+    val bytesOut = new ByteArrayOutputStream()
+    val out = new Output(bytesOut)
+    val tuple = AvroTuple4("Avro", "Kryo", 2, "together")
+    kryo.writeObject(out, tuple)
+    out.close()
+    val bytes = bytesOut.toByteArray
+    bytesOut.close()
+    val bytesIn = new ByteArrayInputStream(bytes)
+    val in = new Input(bytesIn)
+    val tupleOut = kryo.readObject(in, classOf[AvroTuple4[String, String, Int, String]])
+    in.close()
+    bytesIn.close()
+    assert(tupleOut == tuple)
   }
 
   test("Avro tuples can be nested") {

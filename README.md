@@ -66,6 +66,10 @@ val outTuple = AvroTuple2.fromBytes(tuple.toBytes)
 assert(tuple == outTuple)
 ```
 
+### Avro tuples implement KryoSerializable
+
+If pass Avro tuples to the Kryo serializer, the tuple will be (de)serialized in Avro format using the Avro tuple schema.
+
 ### Avro tuples are mutable
 
 You can update the values for an Avro tuple without needing to create a new tuple, e.g.

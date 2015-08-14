@@ -22,6 +22,8 @@ package com.github.massie.avrotuples
 import java.io._
 import java.util
 
+import com.esotericsoftware.kryo.{Kryo, KryoSerializable}
+import com.esotericsoftware.kryo.io.{Input, Output}
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.avro.io.{DecoderFactory, EncoderFactory}
@@ -65,7 +67,7 @@ final case class AvroTuple6[T1, T2, T3, T4, T5, T6](
     @transient var _4: T4,
     @transient var _5: T5,
     @transient var _6: T6)
-  extends Product6[T1, T2, T3, T4, T5, T6] with SpecificRecord with Externalizable {
+  extends Product6[T1, T2, T3, T4, T5, T6] with SpecificRecord with KryoSerializable with Externalizable {
 
   def this() = this(null.asInstanceOf[T1],
                     null.asInstanceOf[T2],
@@ -139,6 +141,14 @@ final case class AvroTuple6[T1, T2, T3, T4, T5, T6](
 
   override def writeExternal(out: ObjectOutput): Unit = {
     AvroTuple6.writeToOutputStream(this, ExternalizableOutput(out))
+  }
+
+  override def write(kryo: Kryo, output: Output): Unit = {
+    AvroTuple6.writeToOutputStream(this, output.getOutputStream)
+  }
+
+  override def read(kryo: Kryo, input: Input): Unit = {
+    AvroTuple6.readFromInputStream(this, input.getInputStream)
   }
     
 

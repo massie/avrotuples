@@ -50,6 +50,8 @@ object CodeGenerator {
       |import java.io._
       |import java.util
       |
+      |import com.esotericsoftware.kryo.{Kryo, KryoSerializable}
+      |import com.esotericsoftware.kryo.io.{Input, Output}
       |import org.apache.avro.Schema
       |import org.apache.avro.generic.GenericData
       |import org.apache.avro.io.{DecoderFactory, EncoderFactory}
@@ -100,7 +102,7 @@ object CodeGenerator {
     val body = s"""
       |final case class AvroTuple${n}[${getTypes(n)}](
       |${ctorArgsString}
-      |  extends Product${n}[${getTypes(n)}] with SpecificRecord with Externalizable {
+      |  extends Product${n}[${getTypes(n)}] with SpecificRecord with KryoSerializable with Externalizable {
       |
       |${types.mkString("  def this() = this(null.asInstanceOf[", "],\n                    null.asInstanceOf[", "])")}
       |
@@ -154,6 +156,14 @@ object CodeGenerator {
       |
       |  override def writeExternal(out: ObjectOutput): Unit = {
       |    AvroTuple${n}.writeToOutputStream(this, ExternalizableOutput(out))
+      |  }
+      |
+      |  override def write(kryo: Kryo, output: Output): Unit = {
+      |    AvroTuple${n}.writeToOutputStream(this, output.getOutputStream)
+      |  }
+      |
+      |  override def read(kryo: Kryo, input: Input): Unit = {
+      |    AvroTuple${n}.readFromInputStream(this, input.getInputStream)
       |  }
     """.stripMargin
     val swap = n match {
