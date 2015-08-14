@@ -68,7 +68,7 @@ assert(tuple == outTuple)
 
 ### Avro tuples implement KryoSerializable
 
-If pass Avro tuples to the Kryo serializer, the tuple will be (de)serialized in Avro format using the Avro tuple schema.
+If you pass Avro tuples to Kryo, the tuple will be (de)serialized in Avro format using the Avro tuple schema.
 
 ### Avro tuples are mutable
 
