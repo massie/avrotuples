@@ -23,6 +23,9 @@ import org.scalatest.FunSuite
 
 class AvroTupleSuite extends FunSuite {
 
+  val userRecordSchemas = List(AvroRecordTestClass.SCHEMA$)
+  AvroTupleSchemas.addRecordSchemas(userRecordSchemas)
+
   test("AvroTuples have an empty ctor for serialization") {
     val tuple = new AvroTuple2()
     assert(tuple != null)
@@ -47,6 +50,13 @@ class AvroTupleSuite extends FunSuite {
   test("AvroTuples can have null values") {
     val tuple = AvroTuple3(null, 0xCAFE, null)
     assert(AvroTuple3.fromBytes(tuple.toBytes) == tuple)
+  }
+
+  test("AvroTuples can have record values") {
+    val tuple = AvroTuple1(AvroRecordTestClass("A-OK full go"))
+    assert(AvroTuple1.fromBytes(tuple.toBytes) == tuple)
+    assert(AvroTuple1.fromBytes(tuple.toBytes)._1
+      .asInstanceOf[AvroRecordTestClass].x == "A-OK full go")
   }
 
   test("Avro Tuples can be (de)serialized to Avro") {

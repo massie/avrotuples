@@ -19,6 +19,7 @@ import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ArrayBuffer
 
 object AvroTupleSchemas {
 
@@ -31,12 +32,18 @@ object AvroTupleSchemas {
     Schema.create(Schema.Type.INT),
     Schema.create(Schema.Type.LONG))
 
+  val recordSchemasArray: ArrayBuffer[Schema] = ArrayBuffer()
+
+  def addRecordSchemas(newRecordSchemas: List[Schema]) = {
+    newRecordSchemas.foreach(rs => recordSchemasArray += rs)
+  }
+
   def generateSchemas(recursive: Boolean): Array[Schema] = {
     val rootSchemas: Array[Schema] = Array.tabulate[Schema](22) { i =>
       Schema.createRecord(s"com.github.massie.avrotuples.AvroTuple${i+1}", "", "", false)
     }
     val avroTypes = recursive match {
-      case true => PRIMITIVE_TYPES ++ rootSchemas
+      case true => PRIMITIVE_TYPES ++ recordSchemasArray ++ rootSchemas
       case false => PRIMITIVE_TYPES
     }
     for (schema <- rootSchemas) {
@@ -47,8 +54,8 @@ object AvroTupleSchemas {
 
   val SCHEMA: Array[Schema] = Array.empty
 
-  val SCHEMAS: Array[Schema] = generateSchemas(true)
-  val FLAT_SCHEMAS: Array[Schema] = generateSchemas(false)
+  lazy val SCHEMAS: Array[Schema] = generateSchemas(true)
+  lazy val FLAT_SCHEMAS: Array[Schema] = generateSchemas(false)
 
   def main(args: Array[String]): Unit = {
     println(SCHEMAS(10).toString(true))
