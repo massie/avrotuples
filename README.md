@@ -91,7 +91,19 @@ Scala provides syntactic sugar that Avro tuples do not. In Scala, you don't need
 
 ### Limited number of types
 
-For now, Avro tuples can be comprised of null values, strings, booleans, floats, doubles, ints, and longs. Support for more types is coming, e.g. `Option`.
+For now, Avro tuples can be comprised of null values, strings, booleans, floats, doubles, ints, longs, and records (case classes that implement `SpecificRecordBase`). Support for more types is coming, e.g. `Option`.
+
+### Records are hard to use
+
+To use a record dataype in an Avro tuple, their schemas must be loaded before any Avro tuple is used:
+```scala
+val userRecordSchemas = List(AvroRecordTestClass.SCHEMA$)
+AvroTupleSchemas.addRecordSchemas(userRecordSchemas)
+```
+and deserialized records require an extra cast if one is to use their field values:
+```scala
+AvroTuple1.fromBytes(tuple.toBytes)._1.asInstanceOf[AvroRecordTestClass].x
+```
 
 ### Recursive schemas break Parquet
 
