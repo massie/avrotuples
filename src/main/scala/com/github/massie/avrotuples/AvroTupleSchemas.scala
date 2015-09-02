@@ -15,14 +15,14 @@
  */
 package com.github.massie.avrotuples
 
+import scala.collection.JavaConversions._
+
 import org.apache.avro.Schema
 import org.apache.avro.Schema.Field
 
-import scala.collection.JavaConversions._
-
 object AvroTupleSchemas {
 
-  val PRIMITIVE_TYPES = List(
+  val primitiveTypes = List(
     Schema.create(Schema.Type.NULL),
     Schema.create(Schema.Type.STRING),
     Schema.create(Schema.Type.BOOLEAN),
@@ -30,14 +30,15 @@ object AvroTupleSchemas {
     Schema.create(Schema.Type.DOUBLE),
     Schema.create(Schema.Type.INT),
     Schema.create(Schema.Type.LONG))
+  val recursiveSchemas: Array[Schema] = generateSchemas(true)
+  val flatSchemas: Array[Schema] = generateSchemas(false)
 
   def generateSchemas(recursive: Boolean): Array[Schema] = {
     val rootSchemas: Array[Schema] = Array.tabulate[Schema](22) { i =>
-      Schema.createRecord(s"com.github.massie.avrotuples.AvroTuple${i+1}", "", "", false)
+      Schema.createRecord(s"com.github.massie.avrotuples.Avro${if (recursive) "" else "Flat"}Tuple${i + 1}", "", "", false)
     }
-    val avroTypes = recursive match {
-      case true => PRIMITIVE_TYPES ++ rootSchemas
-      case false => PRIMITIVE_TYPES
+    val avroTypes = primitiveTypes ++ {
+      if (recursive) rootSchemas else Nil
     }
     for (schema <- rootSchemas) {
       schema.setFields(List(new Field("values", Schema.createArray(Schema.createUnion(avroTypes)), "", null)))
@@ -45,13 +46,8 @@ object AvroTupleSchemas {
     rootSchemas
   }
 
-  val SCHEMA: Array[Schema] = Array.empty
-
-  val SCHEMAS: Array[Schema] = generateSchemas(true)
-  val FLAT_SCHEMAS: Array[Schema] = generateSchemas(false)
-
   def main(args: Array[String]): Unit = {
-    println(SCHEMAS(10).toString(true))
+    println(recursiveSchemas(10).toString(true))
   }
 
 }

@@ -95,7 +95,7 @@ For now, Avro tuples can be comprised of null values, strings, booleans, floats,
 
 ### Recursive schemas break Parquet
 
-There is a known issue with Avro/Parquet and recursive schemas. Avro tuples use a recursive schema in order to support nesting.
+There is a known issue with Avro/Parquet and recursive schemas. AvroTuples use a recursive schema in order to support nesting. If you are using AvroTuples with Parquet, you will need to use the `AvroFlatTupleX` types, since they have flat schemas.
 
 ## License
 

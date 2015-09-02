@@ -60,29 +60,29 @@ object CodeGenerator {
     """.stripMargin
   }
 
-  def tupleObject(n: Int): String = {
+  def tupleObject(n: Int, recursiveSchema: Boolean): String = {
+    val objectName = s"Avro${if (recursiveSchema) "" else "Flat"}Tuple${n}"
     s"""
-       |object AvroTuple${n} {
+       |object ${objectName} {
        |
-       |  val SCHEMA$$ = AvroTupleSchemas.SCHEMAS(${n-1})
-       |  val FLAT_SCHEMA = AvroTupleSchemas.FLAT_SCHEMAS(${n-1})
+       |  val SCHEMA$$ = AvroTupleSchemas.${if (recursiveSchema) "recursive" else "flat"}Schemas(${n-1})
        |
-       |  val reader = new SpecificDatumReader[AvroTuple${n}[${getWildCards(n)}]](SCHEMA$$)
-       |  val writer = new SpecificDatumWriter[AvroTuple${n}[${getWildCards(n)}]](SCHEMA$$)
+       |  val reader = new SpecificDatumReader[${objectName}[${getWildCards(n)}]](SCHEMA$$)
+       |  val writer = new SpecificDatumWriter[${objectName}[${getWildCards(n)}]](SCHEMA$$)
        |
-       |  def readFromInputStream(tuple: AvroTuple${n}[${getWildCards(n)}], in: InputStream) = {
-       |    AvroTuple${n}.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
+       |  def readFromInputStream(tuple: ${objectName}[${getWildCards(n)}], in: InputStream) = {
+       |    ${objectName}.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
        |  }
        |
-       |  def writeToOutputStream(tuple: AvroTuple${n}[${getWildCards(n)}], out: OutputStream) = {
-       |    AvroTuple${n}.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
+       |  def writeToOutputStream(tuple: ${objectName}[${getWildCards(n)}], out: OutputStream) = {
+       |    ${objectName}.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
        |  }
        |
-       |  def fromInputStream(in: InputStream) : AvroTuple${n}[${getWildCards(n)}] = {
-       |    readFromInputStream(null.asInstanceOf[AvroTuple${n}[${getWildCards(n)}]], in)
+       |  def fromInputStream(in: InputStream) : ${objectName}[${getWildCards(n)}] = {
+       |    readFromInputStream(null.asInstanceOf[${objectName}[${getWildCards(n)}]], in)
        |  }
        |
-       |  def fromBytes(bytes: Array[Byte]): AvroTuple${n}[${getWildCards(n)}] = {
+       |  def fromBytes(bytes: Array[Byte]): ${objectName}[${getWildCards(n)}] = {
        |    val in = new ByteArrayInputStream(bytes)
        |    val tuple = fromInputStream(in)
        |    in.close()
@@ -94,19 +94,20 @@ object CodeGenerator {
      """.stripMargin
   }
 
-  def tupleCaseClass(n: Int): String = {
+  def tupleCaseClass(n: Int, recursiveSchema: Boolean): String = {
     val types = for (i <- 1 to n) yield "T" + i
     val ctorArgs = for (i <- 1 to n) yield s"@transient var _${i}: T${i}"
     val ctorArgsString = ctorArgs.mkString("    ", ",\n    ", ")")
+    val tupleName = s"Avro${if (recursiveSchema) "" else "Flat"}Tuple${n}"
 
     val body = s"""
-      |final case class AvroTuple${n}[${getTypes(n)}](
+      |final case class ${tupleName}[${getTypes(n)}](
       |${ctorArgsString}
       |  extends Product${n}[${getTypes(n)}] with SpecificRecord with KryoSerializable with Externalizable {
       |
       |${types.mkString("  def this() = this(null.asInstanceOf[", "],\n                    null.asInstanceOf[", "])")}
       |
-      |  def update(${{for (i <- 1 to n) yield s"n${i}: T${i}"}.mkString(", ")}): AvroTuple${n}[${getTypes(n)}] = {
+      |  def update(${{for (i <- 1 to n) yield s"n${i}: T${i}"}.mkString(", ")}): ${tupleName}[${getTypes(n)}] = {
       |    ${{for (i <- 1 to n) yield s"_${i} = n${i}"}.mkString("\n    ")}
       |    this
       |  }
@@ -137,13 +138,13 @@ object CodeGenerator {
       |    case _ => throw new IndexOutOfBoundsException(i.toString)
       |  }
       |
-      |  override def getSchema: Schema = AvroTuple${n}.SCHEMA$$
+      |  override def getSchema: Schema = ${tupleName}.SCHEMA$$
       |
       |  override def toString: String = ${{for (i <- 1 to n) yield s"_${i}"}.mkString("\"(\" + ", " + \",\" + ", " + \")\"")}
       |
       |  def toBytes: Array[Byte] = {
       |    val byteStream = new ByteArrayOutputStream()
-      |    AvroTuple${n}.writeToOutputStream(this, byteStream)
+      |    ${tupleName}.writeToOutputStream(this, byteStream)
       |    byteStream.flush()
       |    val bytes = byteStream.toByteArray
       |    byteStream.close()
@@ -151,39 +152,46 @@ object CodeGenerator {
       |  }
       |
       |  override def readExternal(in: ObjectInput): Unit = {
-      |    AvroTuple${n}.readFromInputStream(this, ExternalizableInput(in))
+      |    ${tupleName}.readFromInputStream(this, ExternalizableInput(in))
       |  }
       |
       |  override def writeExternal(out: ObjectOutput): Unit = {
-      |    AvroTuple${n}.writeToOutputStream(this, ExternalizableOutput(out))
+      |    ${tupleName}.writeToOutputStream(this, ExternalizableOutput(out))
       |  }
       |
       |  override def write(kryo: Kryo, output: Output): Unit = {
-      |    AvroTuple${n}.writeToOutputStream(this, output.getOutputStream)
+      |    ${tupleName}.writeToOutputStream(this, output.getOutputStream)
       |  }
       |
       |  override def read(kryo: Kryo, input: Input): Unit = {
-      |    AvroTuple${n}.readFromInputStream(this, input.getInputStream)
+      |    ${tupleName}.readFromInputStream(this, input.getInputStream)
       |  }
     """.stripMargin
     val swap = n match {
-      case 2 => "  def swap: AvroTuple2[T2, T1] = AvroTuple2(_2, _1)"
+      case 2 => s"  def swap: ${tupleName}[T2, T1] = ${tupleName}(_2, _1)"
       case _ => ""
     }
     body + "\n" + swap + "\n}"
   }
 
   def main(args: Array[String]) {
-    val fileNamePrefix = "AvroTuple"
     for (i <- 1 to 22) {
-      val writer = new PrintWriter(new File(fileNamePrefix + i.toString + ".scala"))
+      val writer = new PrintWriter(new File("AvroTuple" + i.toString + ".scala"))
       writer.append(header)
       writer.append(packageAndImports("com.github.massie.avrotuples"))
-      writer.append(tupleObject(i))
-      writer.append(tupleCaseClass(i))
+      writer.append(tupleObject(i, recursiveSchema = true))
+      writer.append(tupleCaseClass(i, recursiveSchema = true))
+      writer.flush()
+      writer.close()
+    }
+    for (i <- 1 to 22) {
+      val writer = new PrintWriter(new File("AvroFlatTuple" + i.toString + ".scala"))
+      writer.append(header)
+      writer.append(packageAndImports("com.github.massie.avrotuples"))
+      writer.append(tupleObject(i, recursiveSchema = false))
+      writer.append(tupleCaseClass(i, recursiveSchema = false))
       writer.flush()
       writer.close()
     }
   }
-
 }

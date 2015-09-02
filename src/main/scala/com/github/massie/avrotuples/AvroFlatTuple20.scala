@@ -30,26 +30,26 @@ import org.apache.avro.io.{DecoderFactory, EncoderFactory}
 import org.apache.avro.specific.{SpecificDatumReader, SpecificDatumWriter, SpecificRecord}
 import org.apache.avro.util.Utf8
     
-object AvroTuple22 {
+object AvroFlatTuple20 {
 
-  val SCHEMA$ = AvroTupleSchemas.recursiveSchemas(21)
+  val SCHEMA$ = AvroTupleSchemas.flatSchemas(19)
 
-  val reader = new SpecificDatumReader[AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]](SCHEMA$)
-  val writer = new SpecificDatumWriter[AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]](SCHEMA$)
+  val reader = new SpecificDatumReader[AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]](SCHEMA$)
+  val writer = new SpecificDatumWriter[AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]](SCHEMA$)
 
-  def readFromInputStream(tuple: AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _], in: InputStream) = {
-    AvroTuple22.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
+  def readFromInputStream(tuple: AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _], in: InputStream) = {
+    AvroFlatTuple20.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
   }
 
-  def writeToOutputStream(tuple: AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _], out: OutputStream) = {
-    AvroTuple22.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
+  def writeToOutputStream(tuple: AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _], out: OutputStream) = {
+    AvroFlatTuple20.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
   }
 
-  def fromInputStream(in: InputStream) : AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _] = {
-    readFromInputStream(null.asInstanceOf[AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]], in)
+  def fromInputStream(in: InputStream) : AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _] = {
+    readFromInputStream(null.asInstanceOf[AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _]], in)
   }
 
-  def fromBytes(bytes: Array[Byte]): AvroTuple22[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _] = {
+  def fromBytes(bytes: Array[Byte]): AvroFlatTuple20[_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _] = {
     val in = new ByteArrayInputStream(bytes)
     val tuple = fromInputStream(in)
     in.close()
@@ -59,7 +59,7 @@ object AvroTuple22 {
 }
 
      
-final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22](
+final case class AvroFlatTuple20[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20](
     @transient var _1: T1,
     @transient var _2: T2,
     @transient var _3: T3,
@@ -79,10 +79,8 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
     @transient var _17: T17,
     @transient var _18: T18,
     @transient var _19: T19,
-    @transient var _20: T20,
-    @transient var _21: T21,
-    @transient var _22: T22)
-  extends Product22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22] with SpecificRecord with KryoSerializable with Externalizable {
+    @transient var _20: T20)
+  extends Product20[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20] with SpecificRecord with KryoSerializable with Externalizable {
 
   def this() = this(null.asInstanceOf[T1],
                     null.asInstanceOf[T2],
@@ -103,11 +101,9 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
                     null.asInstanceOf[T17],
                     null.asInstanceOf[T18],
                     null.asInstanceOf[T19],
-                    null.asInstanceOf[T20],
-                    null.asInstanceOf[T21],
-                    null.asInstanceOf[T22])
+                    null.asInstanceOf[T20])
 
-  def update(n1: T1, n2: T2, n3: T3, n4: T4, n5: T5, n6: T6, n7: T7, n8: T8, n9: T9, n10: T10, n11: T11, n12: T12, n13: T13, n14: T14, n15: T15, n16: T16, n17: T17, n18: T18, n19: T19, n20: T20, n21: T21, n22: T22): AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22] = {
+  def update(n1: T1, n2: T2, n3: T3, n4: T4, n5: T5, n6: T6, n7: T7, n8: T8, n9: T9, n10: T10, n11: T11, n12: T12, n13: T13, n14: T14, n15: T15, n16: T16, n17: T17, n18: T18, n19: T19, n20: T20): AvroFlatTuple20[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20] = {
     _1 = n1
     _2 = n2
     _3 = n3
@@ -128,8 +124,6 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
     _18 = n18
     _19 = n19
     _20 = n20
-    _21 = n21
-    _22 = n22
     this
   }
 
@@ -156,8 +150,6 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
       values.add(17, _18.asInstanceOf[AnyRef])
       values.add(18, _19.asInstanceOf[AnyRef])
       values.add(19, _20.asInstanceOf[AnyRef])
-      values.add(20, _21.asInstanceOf[AnyRef])
-      values.add(21, _22.asInstanceOf[AnyRef])
       values.asInstanceOf[AnyRef]
     case _ => throw new IndexOutOfBoundsException(i.toString)
   }
@@ -196,18 +188,16 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
       _18 = utf8string(array.get(17)).asInstanceOf[T18]
       _19 = utf8string(array.get(18)).asInstanceOf[T19]
       _20 = utf8string(array.get(19)).asInstanceOf[T20]
-      _21 = utf8string(array.get(20)).asInstanceOf[T21]
-      _22 = utf8string(array.get(21)).asInstanceOf[T22]
     case _ => throw new IndexOutOfBoundsException(i.toString)
   }
 
-  override def getSchema: Schema = AvroTuple22.SCHEMA$
+  override def getSchema: Schema = AvroFlatTuple20.SCHEMA$
 
-  override def toString: String = "(" + _1 + "," + _2 + "," + _3 + "," + _4 + "," + _5 + "," + _6 + "," + _7 + "," + _8 + "," + _9 + "," + _10 + "," + _11 + "," + _12 + "," + _13 + "," + _14 + "," + _15 + "," + _16 + "," + _17 + "," + _18 + "," + _19 + "," + _20 + "," + _21 + "," + _22 + ")"
+  override def toString: String = "(" + _1 + "," + _2 + "," + _3 + "," + _4 + "," + _5 + "," + _6 + "," + _7 + "," + _8 + "," + _9 + "," + _10 + "," + _11 + "," + _12 + "," + _13 + "," + _14 + "," + _15 + "," + _16 + "," + _17 + "," + _18 + "," + _19 + "," + _20 + ")"
 
   def toBytes: Array[Byte] = {
     val byteStream = new ByteArrayOutputStream()
-    AvroTuple22.writeToOutputStream(this, byteStream)
+    AvroFlatTuple20.writeToOutputStream(this, byteStream)
     byteStream.flush()
     val bytes = byteStream.toByteArray
     byteStream.close()
@@ -215,19 +205,19 @@ final case class AvroTuple22[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, 
   }
 
   override def readExternal(in: ObjectInput): Unit = {
-    AvroTuple22.readFromInputStream(this, ExternalizableInput(in))
+    AvroFlatTuple20.readFromInputStream(this, ExternalizableInput(in))
   }
 
   override def writeExternal(out: ObjectOutput): Unit = {
-    AvroTuple22.writeToOutputStream(this, ExternalizableOutput(out))
+    AvroFlatTuple20.writeToOutputStream(this, ExternalizableOutput(out))
   }
 
   override def write(kryo: Kryo, output: Output): Unit = {
-    AvroTuple22.writeToOutputStream(this, output.getOutputStream)
+    AvroFlatTuple20.writeToOutputStream(this, output.getOutputStream)
   }
 
   override def read(kryo: Kryo, input: Input): Unit = {
-    AvroTuple22.readFromInputStream(this, input.getInputStream)
+    AvroFlatTuple20.readFromInputStream(this, input.getInputStream)
   }
     
 

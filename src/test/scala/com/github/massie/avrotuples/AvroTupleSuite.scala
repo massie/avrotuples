@@ -94,4 +94,10 @@ class AvroTupleSuite extends FunSuite {
     assert(tuple == outTuple)
   }
 
+  test("Avro flat tuples don't support nesting") {
+    val tuple = AvroFlatTuple4(1, 2, "three", "four")
+    val outTuple = AvroFlatTuple4.fromBytes(tuple.toBytes)
+    assert(tuple == outTuple)
+  }
+
 }

@@ -15,13 +15,13 @@
  */
 package com.github.massie.avrotuples
 
-import java.io.{ObjectInput, InputStream}
+import java.io.{InputStream, ObjectInput}
 
 case class ExternalizableInput(in: ObjectInput) extends InputStream {
 
   override def available(): Int = in.available()
 
-  override def close()  = in.close()
+  override def close() = in.close()
 
   override def markSupported(): Boolean = false
 

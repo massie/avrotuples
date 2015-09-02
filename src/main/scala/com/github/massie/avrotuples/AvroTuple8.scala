@@ -32,8 +32,7 @@ import org.apache.avro.util.Utf8
     
 object AvroTuple8 {
 
-  val SCHEMA$ = AvroTupleSchemas.SCHEMAS(7)
-  val FLAT_SCHEMA = AvroTupleSchemas.FLAT_SCHEMAS(7)
+  val SCHEMA$ = AvroTupleSchemas.recursiveSchemas(7)
 
   val reader = new SpecificDatumReader[AvroTuple8[_, _, _, _, _, _, _, _]](SCHEMA$)
   val writer = new SpecificDatumWriter[AvroTuple8[_, _, _, _, _, _, _, _]](SCHEMA$)

@@ -30,26 +30,26 @@ import org.apache.avro.io.{DecoderFactory, EncoderFactory}
 import org.apache.avro.specific.{SpecificDatumReader, SpecificDatumWriter, SpecificRecord}
 import org.apache.avro.util.Utf8
     
-object AvroTuple1 {
+object AvroFlatTuple2 {
 
-  val SCHEMA$ = AvroTupleSchemas.recursiveSchemas(0)
+  val SCHEMA$ = AvroTupleSchemas.flatSchemas(1)
 
-  val reader = new SpecificDatumReader[AvroTuple1[_]](SCHEMA$)
-  val writer = new SpecificDatumWriter[AvroTuple1[_]](SCHEMA$)
+  val reader = new SpecificDatumReader[AvroFlatTuple2[_, _]](SCHEMA$)
+  val writer = new SpecificDatumWriter[AvroFlatTuple2[_, _]](SCHEMA$)
 
-  def readFromInputStream(tuple: AvroTuple1[_], in: InputStream) = {
-    AvroTuple1.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
+  def readFromInputStream(tuple: AvroFlatTuple2[_, _], in: InputStream) = {
+    AvroFlatTuple2.reader.read(tuple, DecoderFactory.get.directBinaryDecoder(in, null))
   }
 
-  def writeToOutputStream(tuple: AvroTuple1[_], out: OutputStream) = {
-    AvroTuple1.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
+  def writeToOutputStream(tuple: AvroFlatTuple2[_, _], out: OutputStream) = {
+    AvroFlatTuple2.writer.write(tuple, EncoderFactory.get.directBinaryEncoder(out, null))
   }
 
-  def fromInputStream(in: InputStream) : AvroTuple1[_] = {
-    readFromInputStream(null.asInstanceOf[AvroTuple1[_]], in)
+  def fromInputStream(in: InputStream) : AvroFlatTuple2[_, _] = {
+    readFromInputStream(null.asInstanceOf[AvroFlatTuple2[_, _]], in)
   }
 
-  def fromBytes(bytes: Array[Byte]): AvroTuple1[_] = {
+  def fromBytes(bytes: Array[Byte]): AvroFlatTuple2[_, _] = {
     val in = new ByteArrayInputStream(bytes)
     val tuple = fromInputStream(in)
     in.close()
@@ -59,14 +59,17 @@ object AvroTuple1 {
 }
 
      
-final case class AvroTuple1[T1](
-    @transient var _1: T1)
-  extends Product1[T1] with SpecificRecord with KryoSerializable with Externalizable {
+final case class AvroFlatTuple2[T1, T2](
+    @transient var _1: T1,
+    @transient var _2: T2)
+  extends Product2[T1, T2] with SpecificRecord with KryoSerializable with Externalizable {
 
-  def this() = this(null.asInstanceOf[T1])
+  def this() = this(null.asInstanceOf[T1],
+                    null.asInstanceOf[T2])
 
-  def update(n1: T1): AvroTuple1[T1] = {
+  def update(n1: T1, n2: T2): AvroFlatTuple2[T1, T2] = {
     _1 = n1
+    _2 = n2
     this
   }
 
@@ -74,6 +77,7 @@ final case class AvroTuple1[T1](
   override def get(i: Int): AnyRef = i match {
     case 0 => val values = new util.ArrayList[AnyRef](productArity)
       values.add(0, _1.asInstanceOf[AnyRef])
+      values.add(1, _2.asInstanceOf[AnyRef])
       values.asInstanceOf[AnyRef]
     case _ => throw new IndexOutOfBoundsException(i.toString)
   }
@@ -93,16 +97,17 @@ final case class AvroTuple1[T1](
       assert(array.size == productArity,
         s"Tried to put ${array.size} values into AvroTuple with productArity of $productArity")
       _1 = utf8string(array.get(0)).asInstanceOf[T1]
+      _2 = utf8string(array.get(1)).asInstanceOf[T2]
     case _ => throw new IndexOutOfBoundsException(i.toString)
   }
 
-  override def getSchema: Schema = AvroTuple1.SCHEMA$
+  override def getSchema: Schema = AvroFlatTuple2.SCHEMA$
 
-  override def toString: String = "(" + _1 + ")"
+  override def toString: String = "(" + _1 + "," + _2 + ")"
 
   def toBytes: Array[Byte] = {
     val byteStream = new ByteArrayOutputStream()
-    AvroTuple1.writeToOutputStream(this, byteStream)
+    AvroFlatTuple2.writeToOutputStream(this, byteStream)
     byteStream.flush()
     val bytes = byteStream.toByteArray
     byteStream.close()
@@ -110,20 +115,20 @@ final case class AvroTuple1[T1](
   }
 
   override def readExternal(in: ObjectInput): Unit = {
-    AvroTuple1.readFromInputStream(this, ExternalizableInput(in))
+    AvroFlatTuple2.readFromInputStream(this, ExternalizableInput(in))
   }
 
   override def writeExternal(out: ObjectOutput): Unit = {
-    AvroTuple1.writeToOutputStream(this, ExternalizableOutput(out))
+    AvroFlatTuple2.writeToOutputStream(this, ExternalizableOutput(out))
   }
 
   override def write(kryo: Kryo, output: Output): Unit = {
-    AvroTuple1.writeToOutputStream(this, output.getOutputStream)
+    AvroFlatTuple2.writeToOutputStream(this, output.getOutputStream)
   }
 
   override def read(kryo: Kryo, input: Input): Unit = {
-    AvroTuple1.readFromInputStream(this, input.getInputStream)
+    AvroFlatTuple2.readFromInputStream(this, input.getInputStream)
   }
     
-
+  def swap: AvroFlatTuple2[T2, T1] = AvroFlatTuple2(_2, _1)
 }
